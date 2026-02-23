@@ -209,15 +209,42 @@ function renderJobs() {
 
   updateStats();
 }
-/* ===== DELETE FUNCTION ===== */
 function deleteJob(index) {
   jobs.splice(index, 1);
   renderJobs();
 }
 
+function updateStatus(index, status) {
+  jobs[index].status = status;
+  renderJobs();
+}
 
+function filterJobs(type, el) {
+  currentFilter = type;
 
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.classList.remove("bg-blue-600", "text-white");
+    btn.classList.add("bg-white", "border", "border-gray-300");
+  });
 
+  el.classList.remove("bg-white", "border", "border-gray-300");
+  el.classList.add("bg-blue-600", "text-white");
+
+  renderJobs();
+}
+
+function setView(view) {
+  currentView = view;
+  renderJobs();
+}
+
+function updateStats() {
+  document.getElementById("totalCount").innerText = jobs.length;
+  document.getElementById("interviewCount").innerText =
+    jobs.filter(j => j.status === "interview").length;
+  document.getElementById("rejectedCount").innerText =
+    jobs.filter(j => j.status === "rejected").length;
+}
 renderJobs();
 </script>
 
