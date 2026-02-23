@@ -16,17 +16,8 @@
   </style>
 </head>
 <body class="bg-slate-900">
-
-  <!-- Navbar -->
-  <div class="bg-gray-800 text-gray-300 px-10 py-3 flex justify-between text-sm">
-    <button onclick="setView('home')" class="hover:text-white">Home</button>
-    <button onclick="setView('applied')" class="hover:text-white">Applied - No Jobs Available</button>
-  </div>
-
-  <!-- Container -->
   <div class="max-w-6xl mx-auto bg-gray-100 mt-6 p-8 rounded-md">
 
-    <!-- Header -->
     <h1 class="text-xl font-semibold text-gray-800 mb-6">
       Job Application Tracker
     </h1>
@@ -48,7 +39,6 @@
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="flex gap-3 mb-6">
       <button onclick="filterJobs('all', this)"
         class="tab bg-blue-600 text-white px-4 py-1 text-sm rounded">
@@ -66,7 +56,6 @@
       </button>
     </div>
 
-    <!-- Job List -->
     <div id="jobList" class="space-y-4"></div>
 
   </div>
