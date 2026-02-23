@@ -209,6 +209,13 @@ function renderJobs() {
 
   updateStats();
 }
+/* ===== DELETE FUNCTION ===== */
+function deleteJob(index) {
+  jobs.splice(index, 1);
+  renderJobs();
+}
+
+
 
 
 renderJobs();
