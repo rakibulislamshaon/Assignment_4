@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Application Tracker</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-900">
+
+  <!-- Navbar -->
+  <div class="bg-gray-800 text-gray-300 px-10 py-3 flex justify-between text-sm">
+    <button onclick="setView('home')" class="hover:text-white">Home</button>
+    <button onclick="setView('applied')" class="hover:text-white">Applied - No Jobs Available</button>
+  </div>
+
+  <!-- Container -->
+  <div class="max-w-6xl mx-auto bg-gray-100 mt-6 p-8 rounded-md">
+
+    <!-- Header -->
+    <h1 class="text-xl font-semibold text-gray-800 mb-6">
+      Job Application Tracker
+    </h1>
+
+    <div class="grid grid-cols-3 gap-6 mb-6">
+      <div class="bg-white p-4 rounded shadow-sm">
+        <p class="text-gray-500 text-sm">Total</p>
+        <h3 id="totalCount" class="text-lg font-semibold mt-2">0</h3>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow-sm">
+        <p class="text-gray-500 text-sm">Interview</p>
+        <h3 id="interviewCount" class="text-lg font-semibold text-green-600 mt-2">0</h3>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow-sm">
+        <p class="text-gray-500 text-sm">Rejected</p>
+        <h3 id="rejectedCount" class="text-lg font-semibold text-red-600 mt-2">0</h3>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-3 mb-6">
+      <button onclick="filterJobs('all', this)"
+        class="tab bg-blue-600 text-white px-4 py-1 text-sm rounded">
+        All
+      </button>
+
+      <button onclick="filterJobs('interview', this)"
+        class="tab bg-white border border-gray-300 px-4 py-1 text-sm rounded">
+        Interview
+      </button>
+
+      <button onclick="filterJobs('rejected', this)"
+        class="tab bg-white border border-gray-300 px-4 py-1 text-sm rounded">
+        Rejected
+      </button>
+    </div>
+
+    <!-- Job List -->
+    <div id="jobList" class="space-y-4"></div>
+
+  </div>
+<script>
+let currentView = "home";
+let currentFilter = "all";
+
+let jobs = [
+  {
+    title: "Mobile React Developer",
+    company: "Raccoon Tech",
+    location: "Remote",
+    salary: "$60k - $90k",
+    status: "none",
+    desc: "Build cross-platform mobile applications using React Native."
+  },
+  {
+    title: "Web Designer",
+    company: "Waveflow Agency",
+    location: "Los Angeles, CA",
+    salary: "$65k - $85k",
+    status: "none",
+    desc: "Design modern UI/UX experiences for global clients."
+  },
+  {
+    title: "Data Visualization Specialist",
+    company: "DataVibe Solutions",
+    location: "Boston, MA",
+    salary: "$75k - $110k",
+    status: "none",
+    desc: "Create dashboards and visual storytelling reports."
+  },
+  {
+    title: "Backend Developer",
+    company: "CloudFire Inc",
+    location: "Seattle, WA",
+    salary: "$80k - $120k",
+    status: "none",
+    desc: "Develop scalable backend services using Node.js."
+  },
+  {
+    title: "UI/UX Engineer",
+    company: "Innovation Labs",
+    location: "Austin, TX",
+    salary: "$70k - $100k",
+    status: "none",
+    desc: "Bridge design and frontend engineering teams."
+  },
+  {
+    title: "Full Stack Developer",
+    company: "MegaCorp Solutions",
+    location: "New York, NY",
+    salary: "$90k - $130k",
+    status: "none",
+    desc: "Work across frontend and backend technologies."
+  },
+  {
+    title: "DevOps Engineer",
+    company: "StartUpX",
+    location: "Remote",
+    salary: "$85k - $115k",
+    status: "none",
+    desc: "Manage CI/CD pipelines and cloud infrastructure."
+  },
+  {
+    title: "Frontend Developer",
+    company: "TechCorp Industries",
+    location: "San Francisco, CA",
+    salary: "$75k - $105k",
+    status: "none",
+    desc: "Build responsive and accessible web interfaces."
+  }
+];
+
+function renderJobs() {
+  const jobList = document.getElementById("jobList");
+  jobList.innerHTML = "";
+
+  if (currentView === "applied") {
+    jobList.innerHTML = `
+      <div class="bg-white border border-gray-200 rounded p-16 text-center">
+        <div class="text-5xl">📄</div>
+        <h3 class="mt-4 font-semibold text-gray-700">
+          No jobs available
+        </h3>
+        <p class="text-sm text-gray-500 mt-2">
+          Check back later to see job applications.
+        </p>
+      </div>
+    `;
+    updateStats();
+    return;
+  }
+
+  const filtered = jobs.filter(job =>
+    currentFilter === "all" ? true : job.status === currentFilter
+  );
+
+  filtered.forEach((job, index) => {
+    jobList.innerHTML += `
+      <div class="bg-white border border-gray-200 rounded p-5 relative">
+        
+        <!-- Delete Button -->
+        <button onclick="deleteJob(${index})"
+          class="absolute top-4 right-4 text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded">
+          Delete
+        </button>
+
+        <h2 class="font-semibold text-gray-800">${job.title}</h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          ${job.company} • ${job.location} • ${job.salary}
+        </p>
+
+        <span class="inline-block mt-3 px-2 py-1 text-xs rounded
+          ${job.status === "interview"
+            ? "bg-green-100 text-green-700"
+            : job.status === "rejected"
+            ? "bg-red-100 text-red-700"
+            : "bg-gray-200 text-gray-600"}">
+          ${job.status === "none" ? "Not Applied" : job.status}
+        </span>
+
+        <p class="text-sm text-gray-600 mt-3">${job.desc}</p>
+
+        <div class="mt-4 space-x-2">
+          <button onclick="updateStatus(${index}, 'interview')"
+            class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
+            Interview
+          </button>
+
+          <button onclick="updateStatus(${index}, 'rejected')"
+            class="bg-red-600 text-white text-xs px-3 py-1 rounded hover:bg-red-700">
+            Reject
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  updateStats();
+}
+
+
+renderJobs();
+</script>
+
+</body>
+</html>
